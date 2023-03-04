@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 
 from db import db
-from models.models import ModelTask
-from schema import Task
+from models.models import ModelTask, ModelUser
+from schema import Task, User
 
 app = FastAPI(
     title='Todo'
@@ -34,3 +34,14 @@ async def create_task(task: Task):
 async def create_task(task_id: int):
     task = await ModelTask.get_by_id(task_id)
     return task
+
+
+@app.post('/register')
+async def register_user(user: User):
+    user_id = await ModelUser.create(**user.dict())
+    return user_id
+
+
+@app.get('/login')
+async def login_user(user: User):
+    pass
