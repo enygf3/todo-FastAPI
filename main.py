@@ -1,12 +1,15 @@
 from fastapi import FastAPI
 
 from db import db
-from models.models import ModelTask, ModelUser
-from schema import Task, User
+from routes.user import router as user_router
+from routes.task import router as task_router
 
 app = FastAPI(
     title='Todo'
 )
+
+app.include_router(user_router)
+app.include_router(task_router)
 
 
 @app.on_event("startup")
@@ -23,25 +26,3 @@ async def shutdown():
 async def root():
     return {"message": "Hello World"}
 
-
-@app.post('/task/create')
-async def create_task(task: Task):
-    task_id = await ModelTask.create(**task.dict())
-    return task_id
-
-
-@app.get('/task')
-async def create_task(task_id: int):
-    task = await ModelTask.get_by_id(task_id)
-    return task
-
-
-@app.post('/register')
-async def register_user(user: User):
-    user_id = await ModelUser.create(**user.dict())
-    return user_id
-
-
-@app.get('/login')
-async def login_user(user: User):
-    pass
