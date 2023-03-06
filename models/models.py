@@ -1,5 +1,6 @@
 from datetime import datetime
 import bcrypt
+from pydantic import BaseModel
 from sqlalchemy import MetaData, Integer, String, TIMESTAMP, Table, Column, Identity
 from db import db
 
@@ -21,6 +22,11 @@ users = Table(
     Column('username', String, nullable=False),
     Column('password', String, nullable=False)
 )
+
+
+class TaskData(BaseModel):
+    token: str
+    task_id: str
 
 
 class ModelTask:

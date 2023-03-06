@@ -4,10 +4,8 @@ from jose import jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
 
-from config import SECRET_KEY
+from config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 
-ALGORITHM = 'HS256'
-ACCESS_TOKEN_EXPIRE_MINUTES = 5
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
@@ -28,7 +26,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
+        expire = datetime.utcnow() + timedelta(minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES))
     to_encode = {
         'exp': expire,
         'sub': str(data)
