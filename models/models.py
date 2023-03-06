@@ -1,9 +1,7 @@
 import uuid
-from datetime import datetime
 import bcrypt
-from asyncpg import Record
 from pydantic import BaseModel
-from sqlalchemy import MetaData, Integer, String, TIMESTAMP, Table, Column, Identity
+from sqlalchemy import MetaData, Integer, String, Table, Column, Identity, Boolean
 from db import db
 
 metadata = MetaData()
@@ -15,7 +13,10 @@ tasks = Table(
     Column('id', Integer, Identity(start=0, cycle=False, minvalue=0), primary_key=True),
     Column('name', String, nullable=False),
     Column('description', String, nullable=False),
-    Column('user', String, nullable=False)
+    Column('user', String, nullable=False),
+    Column('hot', Boolean, nullable=False, default=False),
+    Column('completed', Boolean, nullable=False, default=False),
+    Column('public', Boolean, nullable=False, default=False),
 )
 
 users = Table(
@@ -82,7 +83,13 @@ class ModelUser:
         return user_id
 
     @classmethod
-    async def get(cls, user_id):
+    async def get_by_id(cls, user_id: str):
         query = users.select().where(users.c.id == user_id)
+        user = await db.fetch_one(query)
+        return user
+
+    @classmethod
+    async def get_by_username(cls, username: str):
+        query = users.select().where(users.c.username == username)
         user = await db.fetch_one(query)
         return user

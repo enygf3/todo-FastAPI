@@ -18,7 +18,7 @@ async def register_user(user: User):
 
 @router.post('/login')
 async def login_user(user: User = Depends()):
-    user_db = await ModelUser.get(user.username)
+    user_db = await ModelUser.get_by_username(user.username)
     if user_db is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
