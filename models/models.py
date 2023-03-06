@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 import bcrypt
 from pydantic import BaseModel
@@ -18,7 +19,7 @@ tasks = Table(
 users = Table(
     'users',
     metadata,
-    Column('id', Integer, Identity(start=0, cycle=False, minvalue=0), primary_key=True),
+    Column('id', String, primary_key=True),
     Column('username', String, nullable=False),
     Column('password', String, nullable=False)
 )
@@ -49,6 +50,7 @@ class ModelUser:
         salt = bcrypt.gensalt()
         hashed = bcrypt.hashpw(user['password'].encode('utf-8'), salt)
         user['password'] = hashed.decode()
+        user['id'] = str(uuid.uuid4())
         query = users.insert().values(**user)
         user_id = await db.execute(query)
         return user_id
