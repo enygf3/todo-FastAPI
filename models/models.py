@@ -63,6 +63,12 @@ class ModelTask:
         result = await db.execute(query)
         return result
 
+    @classmethod
+    async def put(cls, **task):
+        query = tasks.update(values=task).where(tasks.c.id == task.get('id'))
+        result = await db.execute(query)
+        return result
+
 
 class ModelUser:
     @classmethod
@@ -76,7 +82,7 @@ class ModelUser:
         return user_id
 
     @classmethod
-    async def get(cls, username) -> Record | None:
-        query = users.select().where(users.c.username == username)
+    async def get(cls, user_id):
+        query = users.select().where(users.c.id == user_id)
         user = await db.fetch_one(query)
         return user
