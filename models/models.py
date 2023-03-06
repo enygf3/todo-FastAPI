@@ -1,6 +1,7 @@
 import uuid
 from datetime import datetime
 import bcrypt
+from asyncpg import Record
 from pydantic import BaseModel
 from sqlalchemy import MetaData, Integer, String, TIMESTAMP, Table, Column, Identity
 from db import db
@@ -69,7 +70,7 @@ class ModelUser:
         return user_id
 
     @classmethod
-    async def get(cls, username):
+    async def get(cls, username) -> Record | None:
         query = users.select().where(users.c.username == username)
         user = await db.fetch_one(query)
         return user

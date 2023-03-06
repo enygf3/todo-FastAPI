@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
+from jose import jwt
 from starlette import status
 
+from config import SECRET_KEY, ALGORITHM
 from models.models import ModelTask
 from schema import Task
 from utils.auth import get_current_user
@@ -12,13 +14,17 @@ router = APIRouter(
 
 @router.post('/task/create')
 async def create_task(task: Task, token: str):
-    user = await get_current_user(token)
-    if not user:
+    user_id = await get_current_user(token)
+    if not user_id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Incorrect username or password"
         )
-    task_id = await ModelTask.create(**task.dict())
+    updated_task = task.dict()
+    updated_task.update({
+        'user': user_id
+    })
+    task_id = await ModelTask.create(**updated_task)
     return task_id
 
 
