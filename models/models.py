@@ -14,6 +14,7 @@ tasks = Table(
     Column('id', Integer, Identity(start=0, cycle=False, minvalue=0), primary_key=True),
     Column('name', String, nullable=False),
     Column('description', String, nullable=False),
+    Column('user', String, nullable=False)
 )
 
 users = Table(
@@ -42,6 +43,18 @@ class ModelTask:
         query = tasks.select().where(tasks.c.id == task_id)
         task = await db.fetch_one(query)
         return task
+
+    @classmethod
+    async def get_by_user(cls, user_id: str):
+        query = tasks.select().where(tasks.c.user == user_id)
+        fetched_tasks = await db.fetch_all(query)
+        return fetched_tasks
+
+    @classmethod
+    async def get_all(cls):
+        query = tasks.select()
+        fetched_tasks = await db.fetch_all(query)
+        return fetched_tasks
 
 
 class ModelUser:
