@@ -13,7 +13,7 @@ router = APIRouter(
 @router.post('/register')
 async def register_user(user: User):
     user_id = await ModelUser.create(**user.dict())
-    return user_id
+    return create_access_token(user_id)
 
 
 @router.post('/login')
@@ -29,4 +29,4 @@ async def login_user(user: User = Depends()):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Incorrect password"
         )
-    return create_access_token(user_db['username'])
+    return create_access_token(user_db['id'])
