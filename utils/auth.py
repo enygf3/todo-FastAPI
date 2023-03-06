@@ -7,7 +7,11 @@ from starlette import status
 from config import SECRET_KEY, ALGORITHM
 from models.models import ModelUser
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(
+    tokenUrl="/login",
+    scheme_name="JWT",
+    auto_error=True,
+)
 
 
 class TokenData(BaseModel):
@@ -20,6 +24,8 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
+    if not token:
+        raise credentials_exception
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         print(f'payloadkey: {payload} {token}')
