@@ -6,7 +6,6 @@ from db import db
 
 metadata = MetaData()
 
-
 tasks = Table(
     'tasks',
     metadata,
@@ -54,7 +53,7 @@ class ModelTask:
 
     @classmethod
     async def get_all(cls):
-        query = tasks.select()
+        query = tasks.select().where(tasks.c.public == True)
         fetched_tasks = await db.fetch_all(query)
         return fetched_tasks
 
