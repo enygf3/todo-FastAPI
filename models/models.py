@@ -57,6 +57,12 @@ class ModelTask:
         fetched_tasks = await db.fetch_all(query)
         return fetched_tasks
 
+    @classmethod
+    async def remove_by_id(cls, task_id: int):
+        query = tasks.delete().where(tasks.c.id == task_id)
+        result = await db.execute(query)
+        return result
+
 
 class ModelUser:
     @classmethod

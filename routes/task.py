@@ -62,3 +62,21 @@ async def get_all_tasks(token: str):
         )
     tasks = await ModelTask.get_all()
     return tasks
+
+
+@router.delete('/task')
+async def delete_task_by_id(task_id: int, token: str):
+    user = await get_current_user(token)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Incorrect username or password"
+        )
+    try:
+        result = await ModelTask.remove_by_id(task_id)
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Error while deleting task"
+        )
+    return result
